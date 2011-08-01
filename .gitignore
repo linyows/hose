@@ -1,0 +1,6 @@
+.DS_Store
+*.swp
+config/*
+!config/default.yaml.example
+!config/development.yaml.example
+node_modules/*

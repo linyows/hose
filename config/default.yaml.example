@@ -1,0 +1,13 @@
+server:
+  port: 3000
+  host: 'localhost'
+s3:
+  accessKey: '----------------------'
+  secretKey: '--------------------------------'
+  backetSuffix: '.hose.com'
+  staticHost: 'static.hose.com'
+  staticErrorDir: '/error'
+  staticFaviconDir: '/v3/img'
+resize:
+  hashAdminKey:''
+  hashSuffix: '--------'
