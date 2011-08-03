@@ -7,8 +7,8 @@
 
  * Realtime resizing image server for AmazonS3 on node.js.
  *
- * @version 0.1.1
- * @copyright 2006-2011 linyows
+ * @version 0.2.1
+ * @copyright 2011 linyows
  * @author linyows <hello@linyo.ws>
  * @license linyows {@link http://linyo.ws/}
  */
@@ -25,17 +25,13 @@ var im    = require('imagemagick');
 var conf  = require('config');
 
 var name  = 'hose';
-var env = process.env.NODE_ENV || 'development';
+//var env = process.env.NODE_ENV || 'development';
 
 function run()
 {
     http.createServer(handleRequest).listen(conf.server.port, conf.server.host);
 }
 
-/**
- * parsed sample
- * ['/statics/1/100x100q75/aaa.jpg', 'statics', '1', '100', '100', 'q75', '75', 'aaa', '.jpg', index: 0, input: '/statics/1/100x100q75/aaa.jpg' ]
- */
 var handleRequest = function(req, res) {
     switch (true) {
         case ('/favicon.ico' === req.url):
@@ -46,27 +42,25 @@ var handleRequest = function(req, res) {
             error(req, res, 404);
             break;
 
-        case (!(conf.resize.hashAdminKey === parsed[7] || getSecretHash(parsed) === parsed[7])):
+        case (!(conf.resize.hashAdminKey === parsed.hash || getSecretHash(parsed) === parsed.hash)):
             error(req, res, 403);
             break;
 
         default:
-            // todo:
-            // validator@http://stackoverflow.com/questions/4088723/validation-library-for-node-js
-            var bucket = parsed[1];
-            var resorce = '/' + parsed[2] + parsed[8];
             var resizeConfig = {
-                width: parsed[3] - 0,
-                height: parsed[4] - 0,
-                quality: (('string' === typeof parsed[6])? parsed[6] * 0.01: 0.9)
+                width: parsed.width,
+                height: parsed.height,
+                quality: parsed.qualityRate,
+                crop: parsed.crop,
+                type: parsed.type
             };
             var s3Config = {
                 key: conf.s3.accessKey,
                 secret: conf.s3.secretKey,
-                bucket: bucket + conf.s3.backetSuffix
+                bucket: parsed.bucket + conf.s3.backetSuffix
             };
 
-            var s3Req = knox.createClient(s3Config).get(resorce);
+            var s3Req = knox.createClient(s3Config).get('/' + parsed.path + parsed.extension);
 
             s3Req.end();
 
@@ -113,12 +107,41 @@ function handleS3Response(req, res, s3Res, resizeConfig)
 
             s3Res.on('end', function() {
                 var resizeOption = {
+                    customArgs: ['-define', resizeConfig.type + ':size=' + resizeConfig.width + 'x' + resizeConfig.height],
                     srcData: buf,
                     quality: resizeConfig.quality,
                     width:   resizeConfig.width,
                     height:  resizeConfig.height
                 };
-                resizer(req, res, s3Res, resizeOption);
+
+                if (resizeConfig.crop) {
+                    im.identify({data: buf}, function(err, meta) {
+                        if (err) {
+                            console.log('Caught exception: ' + err);
+                            error(req, res, 500);
+                            log(req, 500);
+
+                        //meta = { format: 'JPEG', width: 428, height: 640, depth: 8 }
+                        } else {
+                            if (resizeConfig.crop) {
+                                var dSrc = meta.width / meta.height;
+                                var dDst = resizeConfig.width / resizeConfig.height;
+                                resizeOption.customArgs = [
+                                    '-define', resizeConfig.type + ':size=' + resizeConfig.width + 'x' + resizeConfig.height,
+                                    '-resize', ((dSrc < dDst)? resizeConfig.width + 'x': 'x' + resizeConfig.height),
+                                    '-gravity', 'Center',
+                                    '-crop', resizeConfig.width + 'x' + resizeConfig.height + '+0+0',
+                                    '+repage'
+                                ];
+                            }
+
+                            resizer(req, res, s3Res, resizeOption, parsed.crop);
+                        }
+                    });
+
+                } else {
+                    resizer(req, res, s3Res, resizeOption, parsed.crop);
+                }
             });
             break;
 
@@ -139,7 +162,7 @@ function handleS3Response(req, res, s3Res, resizeConfig)
     }
 }
 
-function resizer(req, res, s3Res, resizeOption)
+function resizer(req, res, s3Res, resizeOption, crop)
 {
     im.resize(resizeOption, function(err, stdout, stderr) {
         if (err) {
@@ -156,8 +179,6 @@ function resizer(req, res, s3Res, resizeOption)
                 'Etag': s3Res.headers['etag'],
                 'Accept-Ranges': s3Res.headers['accept-ranges'],
                 'Content-Length': stdout.length,
-                //'Transfer-Encoding': 'chunked',
-                //'Connection': 'keep-alive'
                 'Connection': 'close'
             });
             res.write(stdout, 'binary');
@@ -167,14 +188,56 @@ function resizer(req, res, s3Res, resizeOption)
     });
 }
 
+/**
+ * parse example
+ * 0 '/statics/1/100x100cq75/802a393d7247aa0caf9056223503bdf611d478ee.jpg',
+ * 1 'statics',
+ * 2 '1',
+ * 3 '100',
+ * 4 '100',
+ * 5 'c', or undefined
+ * 6 'q75',
+ * 7 '75',
+ * 8 '802a393d7247aa0caf9056223503bdf611d478ee',
+ * 9 '.jpg',
+ * 10 index: 0,
+ * 11 input: '/statics/1/100x100cq75/802a393d7247aa0caf9056223503bdf611d478ee.jpg'
+ */
 function parseUrl(url)
 {
-    return url.match(/^\/(\w+)\/([0-9A-z\/_-]+)\/([0-9]{2,3})x([0-9]{2,3})(q([0-9]{2}))?\/(\w+)(\.[a-z]+)$/);
+    var matches = url.match(/^\/(\w+)\/([0-9A-z\/_-]+)\/([0-9]{2,3})x([0-9]{2,3})(c)?(q([0-9]{2}))?\/(\w+)(\.[a-z]+)$/);
+    if (!matches) { return matches; }
+    var parsed = {
+        uri: matches[0],
+        bucket: matches[1],
+        path: matches[2],
+        width: matches[3] - 0,
+        height: matches[4] - 0,
+        crop: (('undefined' === typeof matches[5])? false: true),
+        quality: (('string' === typeof matches[7])? matches[7]: 100),
+        qualityRate: (('string' === typeof matches[7])? matches[7] / 100: 1.0),
+        hash: matches[8],
+        extension: matches[9],
+        type: getFileType(matches[9])
+    };
+    return parsed;
+}
+
+function getFileType(extension)
+{
+    var type = '';
+    switch (extension) {
+        case '.jpg': type = 'jpeg'; break;
+        case '.png': type = 'png'; break;
+        case '.gif': type = 'gif'; break;
+        default: break;
+    }
+    return type;
 }
 
 function getSecretHash(parsed)
 {
-    var string = parsed[1] + parsed[2] + parsed[3] + parsed[4] + parsed[6] + conf.resize.hashSuffix;
+    var string = parsed.bucket + parsed.path + parsed.width + parsed.height + ((parsed.crop)? 'c': '') + parsed.quality + conf.resize.hashSuffix;
     return cr.createHash('sha1').update(string).digest('hex');
 }
 
