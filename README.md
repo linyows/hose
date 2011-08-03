@@ -14,11 +14,11 @@ Inspired by [cookpad's slide](http://www.slideshare.net/mirakui/ss-8150494).
 
 ## Uri
 
-    http://hose.com/<s3_bucket_name>/<s3_file_path>/<width>x<height>q<quality>/<hash>.<extention>
+    http://hose.com/<s3_bucket_name>/<s3_file_path>/<width>x<height>cq<quality>/<hash>.<extention>
 
-Hash is a string sha1 s3_bucket_name, s3_file_path, width, height, quality and secret key.
+Hash is a string sha1 s3_bucket_name, s3_file_path, width, height, c(crop), quality and secret key.
 
-    http://hose.com/<s3_bucket_name>/<s3_file_path>/<width>x<height>q<quality>/<key>.<extention>
+    http://hose.com/<s3_bucket_name>/<s3_file_path>/<width>x<height>cq<quality>/<key>.<extention>
 
 If the development environment, then you can use keyword other than hash.
 
