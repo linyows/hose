@@ -30,6 +30,7 @@ If the development environment, then you can use keyword other than hash.
 
 ## Usage
 
+    $ export NODE_PATH=/usr/local/lib/node_modules
     $ export NODE_ENV=production
     $ forever start|stop|restart hose.js
 
