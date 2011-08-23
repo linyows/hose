@@ -16,7 +16,7 @@ Inspired by [cookpad's slide](http://www.slideshare.net/mirakui/ss-8150494).
 
     http://hose.com/<s3_bucket_name>/<s3_file_path>/<width>x<height>cq<quality>/<hash>.<extention>
 
-<s3_bucket_name>/<s3_file_path>/<width>x<height>cq<quality>/<secret_key> to hash.
+&lt;s3_bucket_name&gt;/&lt;s3_file_path&gt;/&lt;width&gt;x&lt;height&gt;cq&lt;quality&gt;/&lt;secret_key&gt; to hash.
 
     http://hose.com/<s3_bucket_name>/<s3_file_path>/<width>x<height>cq<quality>/<key>.<extention>
 
@@ -38,7 +38,7 @@ If the development environment, then you can use keyword other than hash.
 
 The MIT License
 
-Copyright (c) 2011 by linyows<linyows@gmail.com>
+Copyright (c) 2011 by linyows &lt;linyows@gmail.com&gt;
 
 Permission is hereby granted, freef charge, to any personbtaining a copyf this software and associated documentation files (the 'Software'),
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
