@@ -191,34 +191,36 @@ function resizer(req, res, s3Res, resizeOption, crop)
 /**
  * parse example
  * 0 '/statics/1/100x100cq75/802a393d7247aa0caf9056223503bdf611d478ee.jpg',
- * 1 'statics',
- * 2 '1',
- * 3 '100',
+ * 1 'statics/1/100x100cq75',
+ * 2 'statics',
+ * 3 '1',
  * 4 '100',
- * 5 'c', or undefined
- * 6 'q75',
- * 7 '75',
- * 8 '802a393d7247aa0caf9056223503bdf611d478ee',
- * 9 '.jpg',
- * 10 index: 0,
- * 11 input: '/statics/1/100x100cq75/802a393d7247aa0caf9056223503bdf611d478ee.jpg'
+ * 5 '100',
+ * 6 'c', or undefined
+ * 7 'q75',
+ * 8 '75',
+ * 9 '802a393d7247aa0caf9056223503bdf611d478ee',
+ * 10 '.jpg',
+ * 11 index: 0,
+ * 12 input: '/statics/1/100x100cq75/802a393d7247aa0caf9056223503bdf611d478ee.jpg'
  */
 function parseUrl(url)
 {
-    var matches = url.match(/^\/(\w+)\/([0-9A-z\/_-]+)\/([0-9]{2,3})x([0-9]{2,3})(c)?(q([0-9]{2}))?\/(\w+)(\.[a-z]+)$/);
+    var matches = url.match(/^\/((\w+)\/([0-9A-z\/_-]+)\/([0-9]{2,3})x([0-9]{2,3})(c)?(q([0-9]{2}))?)\/([\w]+)(\.[a-z]+)$/);
     if (!matches) { return matches; }
     var parsed = {
         uri: matches[0],
-        bucket: matches[1],
-        path: matches[2],
-        width: matches[3] - 0,
-        height: matches[4] - 0,
-        crop: (('undefined' === typeof matches[5])? false: true),
-        quality: (('string' === typeof matches[7])? matches[7]: 100),
-        qualityRate: (('string' === typeof matches[7])? matches[7] / 100: 1.0),
-        hash: matches[8],
-        extension: matches[9],
-        type: getFileType(matches[9])
+        key: matches[1],
+        bucket: matches[2],
+        path: matches[3],
+        width: matches[4] - 0,
+        height: matches[5] - 0,
+        crop: (('undefined' === typeof matches[6])? false: true),
+        quality: (('string' === typeof matches[8])? matches[8]: 100),
+        qualityRate: (('string' === typeof matches[8])? matches[8] / 100: 1.0),
+        hash: matches[9],
+        extension: matches[10],
+        type: getFileType(matches[10])
     };
     return parsed;
 }
@@ -237,7 +239,7 @@ function getFileType(extension)
 
 function getSecretHash(parsed)
 {
-    var string = parsed.bucket + parsed.path + parsed.width + parsed.height + ((parsed.crop)? 'c': '') + parsed.quality + conf.resize.hashSuffix;
+    var string = parsed.key + '/' + conf.resize.hashSuffix;
     return cr.createHash('sha1').update(string).digest('hex');
 }
 
