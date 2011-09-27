@@ -201,12 +201,13 @@ function resizer(req, res, s3Res, resizeOption, crop)
  * 8 '75',
  * 9 '802a393d7247aa0caf9056223503bdf611d478ee',
  * 10 '.jpg',
- * 11 index: 0,
- * 12 input: '/statics/1/100x100cq75/802a393d7247aa0caf9056223503bdf611d478ee.jpg'
+ * 11 '?0123456',
+ * 12 index: 0,
+ * 13 input: '/statics/1/100x100cq75/802a393d7247aa0caf9056223503bdf611d478ee.jpg'
  */
 function parseUrl(url)
 {
-    var matches = url.match(/^\/((\w+)\/([0-9A-z\/_-]+)\/([0-9]{2,3})x([0-9]{2,3})(c)?(q([0-9]{2}))?)\/([\w]+)(\.[a-z]+)$/);
+    var matches = url.match(/^\/((\w+)\/([0-9A-z\/_-]+)\/([0-9]{2,3})x([0-9]{2,3})(c)?(q([0-9]{2}))?)\/([\w]+)(\.[a-z]+)?(\?[A-z0-9]*)?$/);
     if (!matches) { return matches; }
     var parsed = {
         uri: matches[0],
@@ -219,7 +220,7 @@ function parseUrl(url)
         quality: (('string' === typeof matches[8])? matches[8]: 100),
         qualityRate: (('string' === typeof matches[8])? matches[8] / 100: 1.0),
         hash: matches[9],
-        extension: matches[10],
+        extension: (('undefined' === typeof matches[10])? '': matches[10]),
         type: getFileType(matches[10])
     };
     return parsed;
