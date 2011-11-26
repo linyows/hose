@@ -1,6 +1,6 @@
 # hose
 
-<img src="./etc/hose.png" />
+<img src="//github.com/linyows/hose/raw/master/etc/hose.png"/></img>
 
 hose is real-time resizing image server for [AmazonS3](http://aws.amazon.com/s3/) on [node.js](http://nodejs.org).
 Inspired by [cookpad's slide](http://www.slideshare.net/mirakui/ss-8150494).
