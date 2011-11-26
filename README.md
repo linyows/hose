@@ -1,6 +1,6 @@
 # hose
 
-<img src="http://dl.dropbox.com/u/71722/hose.png" />
+<img src="./etc/hose.png" />
 
 hose is real-time resizing image server for [AmazonS3](http://aws.amazon.com/s3/) on [node.js](http://nodejs.org).
 Inspired by [cookpad's slide](http://www.slideshare.net/mirakui/ss-8150494).
@@ -10,7 +10,7 @@ Inspired by [cookpad's slide](http://www.slideshare.net/mirakui/ss-8150494).
  - [knox](https://github.com/LearnBoost/knox) - AmazonS3 client.
  - [imagemagick](https://github.com/rsms/node-imagemagick) - Imagemagick wrapper.
  - [config](https://github.com/lorenwest/node-config) - Runtime configuration for node.js modules.
- - [forever](https://github.com/indexzero/forever) - A simple CLI tool for ensuring that a given script runs continuously.
+ - [forever](https://github.com/nodejitsu/forever) - A simple CLI tool for ensuring that a given script runs continuously.
 
 ## Uri
 
