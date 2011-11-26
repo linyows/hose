@@ -111,7 +111,7 @@ function handleS3Response(req, res, s3Res, resizeConfig)
       });
 
       s3Res.on('end', function() {
-        cropResizer(req, res, s3Res, resizeOption, buf);
+        cropResizer(req, res, s3Res, resizeConfig, buf);
       });
       break;
 
@@ -135,7 +135,7 @@ function handleS3Response(req, res, s3Res, resizeConfig)
 /**
  * Croping resize.
  */
-function cropResizer(req, res, s3Res, resizeOption, buf)
+function cropResizer(req, res, s3Res, resizeConfig, buf)
 {
   var resizeOption = {
     customArgs: ['-define', resizeConfig.type + ':size=' + resizeConfig.width + 'x' + resizeConfig.height],
