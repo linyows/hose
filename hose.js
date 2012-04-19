@@ -23,6 +23,7 @@ var cr    = require('crypto');
 var knox  = require('knox');
 var im    = require('imagemagick');
 var conf  = require('config');
+var url   = require('url');
 
 /**
  * Configuration.
@@ -212,44 +213,59 @@ function resizer(req, res, s3Res, resizeOption)
   });
 }
 
-/**
- * Parse url.
- *
- * Example
- * 0 '/statics/1/100x100cq75/802a393d7247aa0caf9056223503bdf611d478ee.jpg',
- * 1 'statics/1/100x100cq75',
- * 2 'statics',
- * 3 '1',
- * 4 '100',
- * 5 'x'
- * 6 '100',
- * 7 'c', or undefined
- * 8 'q75',
- * 9 '75',
- * 10 '802a393d7247aa0caf9056223503bdf611d478ee',
- * 11 '.jpg',
- * 12 '?0123456',
- * 13 index: 0,
- * 14 input: '/statics/1/100x100cq75/802a393d7247aa0caf9056223503bdf611d478ee.jpg'
- */
-function parseUrl(url)
+function parseUrl(str)
 {
-  var matches = url.match(/^\/((\w+)\/([0-9A-z\/_-]+)\/([0-9]{2,3})?(x)?([0-9]{2,3})?(c)?(q([0-9]{2}))?)\/([\w]+)(\.[a-z]+)?(\?[A-z0-9]*)?$/);
-  if (!matches) { return matches; }
+  /**
+   * input: /bucket/file/100x100cq75/802a393d7247aa0caf9056223503bdf611d478ee.jpg
+   * path[0] = ''
+   * path[1] = 'bucket'
+   * path[2] = 'file'
+   * path[3] = '100x100cq75'
+   * path[4] = '802a393d7247aa0caf9056223503bdf611d478ee.jpg'
+  */
+  parsed_url = url.parse(str);
+  path       =  parsed_url.pathname.split('/');
+
+  params_regexp = /([0-9]{2,3})?(x)?([0-9]{2,3})?(c)?(q([0-9]{2}))?/;
+  if (
+          !path[1].match(/\w+/)
+       || !path[2].match(/[0-9A-z\/_-]+/)
+       || !path[3].match(params_regexp)
+       || !path[4].match(/[\w]+\.[a-z]+/)
+  ) {
+    return matches;
+  }
+
+  /**
+   * Example
+   * 0 '100x600cq99',
+   * 1 '100',
+   * 2 'x',
+   * 3 '600',
+   * 4 'c',
+   * 5 'q99',
+   * 6 '99',
+   * 7 index: 0,
+   * 8 input: '100x600cq99'
+  */
+  params = path[3].match(params_regexp);
+
+  basename = path[4].match(/([\w]+)(\.[a-z]+)/);
+
   var parsed = {
-    uri: matches[0],
-    key: matches[1],
-    bucket: matches[2],
-    path: matches[3],
-    width: (('undefined' === typeof matches[4])? '': matches[4] - 0),
-    height: (('undefined' === typeof matches[6])? '': matches[6] - 0),
-    max: (('undefined' === typeof matches[5])? (('undefined' === typeof matches[4])? matches[6]: matches[4]) - 0: false),
-    crop: (('undefined' === typeof matches[7])? false: true),
-    quality: (('string' === typeof matches[9])? matches[9]: 100),
-    qualityRate: (('string' === typeof matches[9])? matches[9] / 100: 1.0),
-    hash: matches[10],
-    extension: (('undefined' === typeof matches[11])? '': matches[11]),
-    type: getFileType(matches[11])
+    uri: parsed_url.path,
+    key: path[1] + '/' + path[2] + '/' + path[3],
+    bucket: path[1],
+    path: path[2],
+    width: (('undefined' === typeof params[1])? '': params[1] - 0),
+    height: (('undefined' === typeof params[3])? '': params[3] - 0),
+    max: (('undefined' === typeof params[2])? (('undefined' === typeof params[1])? params[3]: params[1]) - 0: false),
+    crop: (('undefined' === typeof params[4])? false: true),
+    quality: (('string' === typeof params[6])? params[6]: 100),
+    qualityRate: (('string' === typeof params[6])? params[6] / 100: 1.0),
+    hash: basename[1],
+    extension: (('undefined' === typeof basename[2])? '': basename[2]),
+    type: getFileType(basename[2])
   };
   return parsed;
 }
