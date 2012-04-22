@@ -1,13 +1,15 @@
-server:
+Server:
+  name: 'hose'
   port: 3000
   host: 'localhost'
-s3:
-  accessKey: '----------------------'
-  secretKey: '--------------------------------'
-  backetSuffix: '.hose.com'
-  staticHost: 'static.hose.com'
-  staticErrorDir: '/error'
-  staticFaviconDir: '/v3/img'
-resize:
-  hashAdminKey:''
-  hashSuffix: '--------'
+S3:
+  accessKeyId: 'your_access_key'
+  secretKeyId: 'your_secret_key'
+  backetName: ''
+  backetPrefix: 'me-'
+  backetSuffix: ''
+  staticHost: 'foobar.s3.amazonaws.com'
+  staticPort: 80
+  staticRoot: '/baz'
+Sign:
+  secretKey: 's3_secret_key'

@@ -1,2 +1,2 @@
-resize:
-  hashAdminKey: admin
+Sign:
+  adminKey: 'test_case_only'

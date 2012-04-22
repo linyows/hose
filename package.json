@@ -1,12 +1,34 @@
 {
-   "name"              : "hose",
-   "version"           : "0.0.1",
-   "private"           : true,
-   "dependencies"      : {
-     "knox"              : "0.0.9",
-     "config"            : "0.4.4",
-     "forever"           : "0.7.2",
-     "imagemagick"       : "latest",
-     "node-dev"          : "latest"
-   }
+  "name": "hose",
+  "description": "A real-time resizing image server for Amazon S3.",
+  "version": "0.1.0",
+  "keywords": ["image", "server", "aws", "s3", "resize"],
+  "author": "linyows <linyows@gmail.com>",
+  "homepage": "http://linyows.github.com/hose",
+  "licenses": [{
+    "type": "MIT",
+    "url": "https://github.com/linyows/hose/blob/master/LICENSE"
+  }],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/linyows/hose.git"
+  },
+  "main": "./lib/hose",
+  "bin": {
+    "hose": "./bin/hose"
+  },
+  "dependencies": {
+    "knox": "0.0.9",
+    "imagemagick": "0.1.2",
+    "config": "0.4.11",
+    "optimist": "~0.2.3",
+    "colors": "0.6.x"
+  },
+  "devDependencies": {
+    "mocha": "1.0.x"
+  },
+  "optionalDependencies": {},
+  "engines": {
+    "node": ">= 0.6.0"
+  }
 }
