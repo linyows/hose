@@ -13,15 +13,18 @@ Features
 - Very easy to use.
 - Use multi buckets.
 
-Quick start
------------
+Quick start (mac)
+-----------------
 
-Mac
+Install:
 
     $ brew install imagemagick
     $ git clone git://github.com/linyows/hose.git
     $ cd hose
     $ npm install
+
+Setting:
+
     $ cp config/default.yaml.example config/default.yaml
     $ vim config/default.yaml
 ```yaml
@@ -35,33 +38,46 @@ Sign:
   adminKey: 'test'
 ```
 
-deploy error page on "staticHost"
+Deploy file on "bucketName":
 
-- favicon.ico
-- 403.html
-- 404.html
-- 500.html
+    /baz.jpg
+
+Deploy files on "staticHost":
+
+    /favicon.ico
+    /403.html
+    /404.html
+    /500.html
+
+Start server:
 
     $ ./bin/hose --port 8000
 
+Access:
+
+    http://localhost:8000/baz/300x300cq80/test.jpg
+
+
 Url
 ---
-
-    section:
-    http://yourdomain.com/bucketName/(filePath without extension)/resizeParams/signature.ext
     
-    example:
+Example
+
     http://foobar.com/myBucket/(category/subcategory/date/fileName)/100x100cq75/802a393d7247aa0caf9056223503bdf611d478ee.jpg
+
+Section
+
+    http://yourdomain.com/bucketName/(filePath without extension)/resizeParams/signature.ext
 
 
 Specifying the bucket
 ---------------------
 
-### In the url
+In the **url**
 
     http://yourdomain.com/"bucketName"/(filePath without extension)/resizeParams/signature.ext
 
-    $ vim config/default.yaml
+`$ vim config/default.yaml`
 
 ```yaml
 S3:
@@ -70,11 +86,11 @@ S3:
   bucketSuffix: ''
 ```
 
-### In the yaml-file
+In the **yaml-file**
 
     http://yourdomain.com/(filePath without extension)/resizeParams/signature.ext
     
-    $ vim config/default.yaml
+`$ vim config/default.yaml`
 
 ```yaml
 S3:
