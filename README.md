@@ -6,37 +6,87 @@ Hose
 hose is real-time resizing image server for [Amazon S3](http://aws.amazon.com/s3/) on [node.js](http://nodejs.org).
 Inspired by [cookpad's slide](http://www.slideshare.net/mirakui/ss-8150494).
 
-Modules dependency
-------------------
+Features
+--------
 
- - [knox](https://github.com/LearnBoost/knox) - AmazonS3 client.
- - [imagemagick](https://github.com/rsms/node-imagemagick) - Imagemagick wrapper.
- - [config](https://github.com/lorenwest/node-config) - Runtime configuration for node.js modules.
+- High performance (scaleable).
+- Very easy to use.
+- Use multi buckets.
 
-Uri
----
+Quick start
+-----------
 
-    http://hose.com/<s3_bucket_name>/<s3_file_path>/<width>x<height>cq<quality>/<hash>.<extention>
+Mac
 
-&lt;s3_bucket_name&gt;/&lt;s3_file_path&gt;/&lt;width&gt;x&lt;height&gt;cq&lt;quality&gt;/&lt;secret_key&gt; to hash.
-
-    http://hose.com/<s3_bucket_name>/<s3_file_path>/<width>x<height>cq<quality>/<key>.<extention>
-
-If the development environment, then you can use keyword other than hash.
-
-Setting
--------
-
-    $ npm install -g
+    $ brew install imagemagick
+    $ git clone git://github.com/linyows/hose.git
+    $ cd hose
+    $ npm install
     $ cp config/default.yaml.example config/default.yaml
     $ vim config/default.yaml
+```yaml
+S3:
+  accessKeyId: 'your access key id'
+  secretKeyId: 'your secret key id'
+  bucketName: 'your bucket name'
+  staticHost: 'foobar.s3.amazonaws.com'
+Sign:
+  secretKey: 'your secret key id'
+  adminKey: 'test'
+```
 
-Usage
------
+deploy error page on "staticHost"
 
-    $ export NODE_PATH=/usr/local/lib/node_modules:$PATH
-    $ export NODE_ENV=production
-    $ forever start|stop|restart hose.js
+- favicon.ico
+- 403.html
+- 404.html
+- 500.html
+
+    $ ./bin/hose --port 8000
+
+Url
+---
+
+    section:
+    http://yourdomain.com/bucketName/(filePath without extension)/resizeParams/signature.ext
+    
+    example:
+    http://foobar.com/myBucket/(category/subcategory/date/fileName)/100x100cq75/802a393d7247aa0caf9056223503bdf611d478ee.jpg
+
+
+Specifying the bucket
+---------------------
+
+### In the url
+
+    http://yourdomain.com/"bucketName"/(filePath without extension)/resizeParams/signature.ext
+
+    $ vim config/default.yaml
+
+```yaml
+S3:
+  bucketName: ''
+  bucketPrefix: 'myBucket-'
+  bucketSuffix: ''
+```
+
+### In the yaml-file
+
+    http://yourdomain.com/(filePath without extension)/resizeParams/signature.ext
+    
+    $ vim config/default.yaml
+
+```yaml
+S3:
+  bucketName: 'myBucket-assets'
+  bucketPrefix: ''
+  bucketSuffix: ''
+```
+
+Running Tests
+-------------
+
+    $ make test
 
 License
 -------
