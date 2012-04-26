@@ -13,6 +13,15 @@ Features
 - Very easy to use.
 - Use multi buckets.
 
+Architecture
+------------
+
+```console
++---------+      +-------------+      +-----+      +----+
+| Browser | <--> | Cloud Front | <--> | EC2 | <--> | S3 |
++---------+      +-------------+      +-----+      +----+
+```
+
 Quick start (mac)
 -----------------
 
