@@ -103,6 +103,11 @@ Todo
 - Register npm
 - Design of sample html
 
+Author
+------
+
+- @linyows
+
 License
 -------
 
