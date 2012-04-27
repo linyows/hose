@@ -1,7 +1,5 @@
-Hose
+hose
 ====
-
-<img src="//github.com/linyows/hose/raw/master/etc/hose.png"/></img>
 
 hose is real-time resizing image server for [Amazon S3](http://aws.amazon.com/s3/).
 Inspired by [cookpad's slide](http://www.slideshare.net/mirakui/ss-8150494).
@@ -12,14 +10,29 @@ Features
 - High performance (scaleable).
 - Very easy to use.
 - Use multi buckets.
+- Smart cache.
 
 Architecture
 ------------
 
+A hose
+
 ```console
-+---------+      +-------------+      +-----+      +----+
-| Browser | <--> | Cloud Front | <--> | EC2 | <--> | S3 |
-+---------+      +-------------+      +-----+      +----+
++---------+      +------------+      +------------+      +----+
+| Browser | <--> | CloudFront | <--> | EC2 (hose) | <--> | S3 |
++---------+      +------------+      +------------+      +----+
+```
+
+hoses
+
+```console
+                                                  +------------+
+                                                  | EC2 (hose) |
++---------+      +------------+      +-----+      +------------+      +----+
+| Browser | <--> | CloudFront | <--> | ELB | <-->                <--> | S3 |
++---------+      +------------+      +-----+      +------------+      +----+
+                                                  | EC2 (hose) |
+                                                  +------------+
 ```
 
 Quick start (mac)
