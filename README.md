@@ -10,7 +10,7 @@ Features
 - High performance (scaleable).
 - Very easy to use.
 - Use multi buckets.
-- Smart cache.
+- Smart cache (CDN-cache & 304 browser-cache).
 
 Architecture
 ------------
