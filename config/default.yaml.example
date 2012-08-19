@@ -8,8 +8,10 @@ S3:
   backetName: ''
   backetPrefix: 'me-'
   backetSuffix: ''
-  staticHost: 'foobar.s3.amazonaws.com'
-  staticPort: 80
-  staticRoot: '/baz'
+Static:
+  host: 'foobar.s3.amazonaws.com'
+  port: 80
+  root: '/baz'
+  encoding: 'utf-8'
 Sign:
   secretKey: 's3_secret_key'
