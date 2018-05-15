@@ -1,6 +1,8 @@
 hose
 ====
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/linyows/hose.svg)](https://greenkeeper.io/)
+
 hose is real-time resizing image server for [Amazon S3](http://aws.amazon.com/s3/).
 Inspired by [cookpad's slide](http://www.slideshare.net/mirakui/ss-8150494).
 
